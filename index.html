@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>과학수사대 CSI — 한빛과학관 운석 도난 사건</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f6fa; --card:#ffffff; --ink:#1d2433; --muted:#5d6678; --line:#e1e5ee;
+  --navy:#1f3a8a; --navy2:#2f4fb5; --amber:#f2a516; --amber-bg:#fff6e0;
+  --ok:#1f8a4c; --ok-bg:#e7f6ee; --no:#c0392b; --no-bg:#fdecea; --red:#d6336c;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Noto Sans KR',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+header{background:#fff;border-bottom:1px solid var(--line);padding:14px 22px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center}
+.badge{background:var(--navy);color:#fff;font-weight:900;border-radius:10px;padding:8px 10px;letter-spacing:1px}
+.brand .sub{font-size:13px;color:var(--muted)}
+.brand h1{margin:0;font-size:21px}
+.team{display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:14px}
+.team input{border:1px solid var(--line);border-radius:8px;padding:6px 10px;font:inherit;width:150px}
+.prog{display:flex;gap:8px;align-items:center;font-weight:700}
+.bar{width:140px;height:10px;background:#e8ebf2;border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy2),var(--amber));transition:width .5s}
+nav{display:flex;gap:6px;flex-wrap:wrap;padding:10px 22px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;cursor:pointer;color:var(--ink)}
+nav button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+nav button.done::after{content:" ✓";color:var(--ok);font-weight:900}
+nav button.on.done::after{color:#9ff0c0}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:18px;padding:18px 22px;max-width:1400px;margin:0 auto}
+@media(max-width:1000px){.wrap{grid-template-columns:1fr}}
+section{display:none}
+section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+h2{margin:0 0 6px;font-size:22px}
+h3{margin:0 0 8px;font-size:17px}
+.lead{color:var(--muted);margin:0 0 4px}
+.sci{background:#eef3ff;border-left:4px solid var(--navy2);border-radius:8px;padding:10px 14px;font-size:14.5px;margin:10px 0}
+.sci b{color:var(--navy)}
+.warn{background:var(--amber-bg);border-left:4px solid var(--amber);border-radius:8px;padding:10px 14px;font-size:14.5px;margin:10px 0}
+.step{border:1px dashed #cdd3e0;border-radius:12px;padding:14px 16px;margin:12px 0;position:relative}
+.step .tag{display:inline-block;background:var(--navy);color:#fff;font-size:12px;border-radius:6px;padding:1px 8px;margin-bottom:6px}
+.step.locked{opacity:.4;pointer-events:none}
+.step.locked::after{content:"🔒 앞 단계를 해결하면 열립니다";position:absolute;right:14px;top:12px;font-size:12.5px;color:var(--muted)}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:9px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--navy2)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn:disabled{opacity:.45;cursor:default}
+.q .qt{font-weight:700;margin-bottom:8px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts button{border:1px solid #cfd5e2;background:#fff;border-radius:9px;padding:8px 14px;font:inherit;cursor:pointer;text-align:left}
+.opts button:hover:not(:disabled){border-color:var(--navy2);background:#f3f6ff}
+.opts button.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);font-weight:700}
+.opts button.no{background:var(--no-bg);border-color:var(--no);color:var(--no);text-decoration:line-through}
+.fb{margin-top:8px;font-size:14.5px;border-radius:8px}
+.fb.ok{background:var(--ok-bg);color:#145c33;padding:8px 12px}
+.fb.no{background:var(--no-bg);color:#8e2a20;padding:8px 12px}
+.got{display:none;background:linear-gradient(90deg,#e7f6ee,#fff);border:1px solid #a8dcbc;border-radius:12px;padding:12px 16px;margin-top:12px;font-weight:700;color:#145c33}
+.got.show{display:block;animation:pop .5s}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.grid2{grid-template-columns:1fr}}
+.sus{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.scard{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fbfcfe}
+.scard .nm{font-weight:900;font-size:17px}
+.scard .role{font-size:13px;color:var(--muted)}
+.scard .av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;float:right}
+.scard dl{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:13.5px;margin:8px 0}
+.scard dt{color:var(--muted)}
+.scard .say{font-size:13.5px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 9px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+th{background:#f3f5fa;font-weight:700}
+.svgbox{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;text-align:center}
+.svgbox svg{max-width:100%;height:auto}
+.cap{font-size:13px;color:var(--muted);margin-bottom:4px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid #cfd5e2;border-radius:999px;padding:5px 12px;background:#fff;cursor:pointer;font:inherit;font-size:13.5px}
+.chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.memo{font-family:'Nanum Pen Script',cursive;font-size:30px;line-height:1.35;background:#fffef6;border:1px solid #e6dfb8;border-radius:4px;padding:18px 22px;box-shadow:2px 3px 0 #ece6c6;transform:rotate(-1.2deg);max-width:400px;color:#2b3ca8}
+.memo small{display:block;font-family:'Noto Sans KR';font-size:12px;color:#8a8466;margin-top:6px;transform:none}
+aside .card{position:sticky;top:64px}
+.ev{border:1px solid var(--line);border-left:5px solid var(--amber);border-radius:10px;padding:8px 10px;margin:8px 0;font-size:13.5px;background:#fffdf7}
+.ev b{display:block;font-size:13px;color:var(--navy)}
+.empty{color:var(--muted);font-size:13.5px}
+.mtx td,.mtx th{text-align:center;padding:5px 4px;font-size:13px}
+.mtx td.c{cursor:pointer;font-weight:900;font-size:16px;user-select:none}
+.mtx td.c:hover{background:#f3f6ff}
+.mtx td.o{color:var(--ok)} .mtx td.x{color:var(--no)} .mtx td.q{color:var(--amber)}
+.logtbl td:nth-child(1){white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:700}
+.logtbl tr.hl td{background:#fff3cd}
+.src{font-size:12px;border-radius:6px;padding:1px 7px;color:#fff;white-space:nowrap}
+.readout{font-size:15px;background:#f3f5fa;border-radius:9px;padding:8px 12px;display:inline-block;margin-top:6px}
+.readout b{color:var(--navy)}
+input[type=range]{width:100%}
+.lanepick{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.pick{border:2px solid #cfd5e2;border-radius:12px;padding:8px;background:#fff;cursor:pointer;text-align:center;font:inherit;font-size:13px}
+.pick:hover{border-color:var(--navy2)}
+.pick.sel{border-color:var(--navy);background:#eef3ff}
+.verdict{border-radius:14px;padding:18px 20px;margin-top:14px}
+.verdict.win{background:var(--ok-bg);border:1px solid #a8dcbc}
+.verdict.lose{background:var(--no-bg);border:1px solid #f0b8b0}
+.tl{border-left:3px solid var(--navy2);margin:10px 0 0 6px;padding-left:16px}
+.tl div{margin:6px 0;position:relative;font-size:14.5px}
+.tl div::before{content:"";position:absolute;left:-23px;top:8px;width:11px;height:11px;border-radius:50%;background:var(--navy2)}
+.tl b{color:var(--navy);display:inline-block;min-width:54px}
+details{margin-top:8px}
+summary{cursor:pointer;font-weight:700;color:var(--navy)}
+.small{font-size:13px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:9px;padding:9px;font:inherit}
+.stationgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:10px}
+.st{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fbfcfe;cursor:pointer}
+.st:hover{border-color:var(--navy2);background:#f3f6ff}
+.st .ic{font-size:26px}
+.st .t{font-weight:700}
+.st .d{font-size:12.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="badge">CSI</div>
+    <div><div class="sub">과학수사 체험 활동 · 6개 감식실</div><h1>한빛과학관 운석 도난 사건</h1></div>
+  </div>
+  <div class="team">
+    <label>수사팀 이름 <input id="team" placeholder="예: 3반 2모둠"></label>
+    <div class="prog"><span>감식 진행</span><div class="bar"><i id="progBar"></i></div><span id="progTxt">0/6</span></div>
+  </div>
+</header>
+<nav id="tabs"></nav>
+
+<div class="wrap">
+<main>
+
+<!-- ============ 사건 브리핑 ============ -->
+<section id="s0">
+  <div class="card">
+    <h2>📁 사건 브리핑</h2>
+    <p>2026년 11월 16일(일) 밤, <b>한빛과학관 2층 특별전시실 3번 진열장</b>에 있던 <b>'한빛 운석'</b>(철질운석, 무게 2.3 kg)이 사라졌습니다.
+    다음 날 아침 6시에 출근한 직원이 처음 발견했고, 야간 경비원 <b>정경수</b> 씨는 경비실 의자에서 깊이 잠든 채 발견되었습니다.
+    정경수 씨는 <i>"밤 9시 50분쯤부터 아무것도 기억나지 않는다"</i>고 말합니다.</p>
+    <p>여러분은 과학수사대(CSI) 요원입니다. 현장에서 수거한 증거물을 <b>6개 감식실</b>에서 분석해, 누가 운석을 가져갔는지 <b>과학적 근거로</b> 밝혀내세요.</p>
+    <h3 style="margin-top:14px">🧾 현장 증거물 목록</h3>
+    <table>
+      <tr><th>번호</th><th>증거물</th><th>발견 위치</th><th>담당 감식실</th></tr>
+      <tr><td>①</td><td>드라이버 1개</td><td>진열장 앞 바닥</td><td>🖐️ 지문 감식</td></tr>
+      <tr><td>②</td><td>머리카락 1가닥(모근 있음)</td><td>깨진 진열장 유리 조각 사이</td><td>🧬 DNA 분석</td></tr>
+      <tr><td>③</td><td>진흙 족적 여러 개</td><td>뒷문 ~ 2층 계단</td><td>👣 족적 감정</td></tr>
+      <tr><td>④</td><td>손글씨 메모 1장</td><td>1층 화장실 쓰레기통</td><td>📝 문서 감정</td></tr>
+      <tr><td>⑤</td><td>출입카드·Wi-Fi·휴대폰 기록</td><td>과학관 서버, 통신사(수사 협조)</td><td>💻 디지털 포렌식</td></tr>
+      <tr><td>⑥</td><td>경비원 혈액(06:12 채혈)</td><td>병원 이송 후 채혈</td><td>🩺 법의학</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🕵️ 용의자 4명</h3>
+    <p class="lead small">진술은 거짓일 수도 있습니다. 증거로 확인하세요.</p>
+    <div class="sus" id="suspects"></div>
+  </div>
+
+  <div class="card">
+    <h3>🔬 감식실로 이동</h3>
+    <p class="small">순서는 자유입니다. 각 감식실의 마지막 질문을 해결하면 오른쪽 <b>수사 노트</b>에 증거 카드가 쌓입니다. 증거를 모은 뒤 <b>최종 추리</b>에서 범인을 지목하세요.</p>
+    <div class="stationgrid" id="stgrid"></div>
+  </div>
+
+  <div class="card">
+    <details>
+      <summary>👩‍🏫 교사용 안내 (학생 화면에서는 접어 두세요)</summary>
+      <div style="margin-top:8px;font-size:14.5px">
+        <p><b>운영 예시</b> — 45분 1차시: 모둠별로 6개 감식실을 모두 수행 후 최종 추리(약 35분) + 발표·정리(10분). 90분 블록이면 감식실별 '실제 과학수사' 토론을 더할 수 있습니다. 모둠 6개로 나눠 감식실을 하나씩 맡기고 결과를 공유하는 <b>직소(jigsaw)</b> 방식도 좋습니다.</p>
+        <p><b>연계 교과 개념</b> — 지문(생물: 개인 고유 형질), DNA 전기영동(생물: 유전 / 과학: 분자 크기), 족적·보폭(수학: 비례식), 크로마토그래피(과학: 혼합물의 분리, Rf값), 디지털 포렌식(정보: 로그와 메타데이터), 법의학(수학: 반감기·지수 감소).</p>
+        <p><b>정답 요약</b> — 범인은 <b>C 박태준</b>. ① 제상문 · 특징점 6/6 일치 ② 5개 밴드 모두 일치 ③ 족적 280 mm → 신발 265 mm, 보폭 72 cm → 키 약 174 cm, 작업화 블록 무늬 ④ 파랑(Rf 0.35)+분홍(Rf 0.72) ⑤ 강민호 카드는 분실 신고된 카드, 23:01 박태준 휴대폰 Wi-Fi 접속 ⑥ 섭취 시각 약 21:10 → 박태준이 건넨 에너지음료.</p>
+        <p><b>함정(토론 포인트)</b> — 출입카드 기록만 보면 강민호, '커피'라는 말만 들으면 오세라가 의심받습니다. "기록은 <i>기기·카드</i>를 가리킬 뿐 <i>사람</i>을 가리키지 않는다", "한 가지 증거만으로 단정하지 않는다"를 정리 질문으로 활용하세요.</p>
+        <p class="small">※ 사건·인물·장소는 모두 가상입니다. 감식 방법은 원리를 이해하기 쉽도록 단순화했습니다(예: 키·신발 치수 어림 공식, 약물 농도 모형).</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============ 1. 지문 ============ -->
+<section id="s1">
+  <div class="card">
+    <h2>🖐️ 감식실 1 — 지문 감식</h2>
+    <p class="lead">증거물 ① 진열장 앞에 떨어져 있던 드라이버 손잡이에서 지문을 채취합니다.</p>
+    <div class="sci"><b>과학 원리</b> — 손끝의 땀과 기름은 물체에 눈에 보이지 않는 <b>잠재지문</b>을 남깁니다. 고운 분말을 뿌리면 분말이 땀·기름에 달라붙어 융선(지문의 볼록한 줄)이 드러납니다.
+    지문은 모양에 따라 <b>궁상문</b>(활 모양), <b>제상문</b>(말발굽 모양), <b>와상문</b>(소용돌이 모양)으로 나누고, 융선이 끊기거나 갈라지는 <b>특징점</b>의 위치를 비교해 같은 사람인지 판단합니다.</div>
+
+    <div class="step" id="f1">
+      <span class="tag">STEP 1</span><h3>분말법으로 잠재지문 드러내기</h3>
+      <div class="grid2">
+        <div class="svgbox"><div class="cap">드라이버 손잡이 표면</div><div id="latentBox"></div></div>
+        <div>
+          <p class="small">붓에 분말을 묻혀 가볍게 쓸어내리듯 뿌립니다. 너무 세게 문지르면 지문이 뭉개집니다.</p>
+          <button class="btn" id="dustBtn">🖌️ 분말 뿌리기</button>
+          <button class="btn ghost" id="markBtn" disabled style="margin-left:6px">📍 특징점 표시</button>
+          <p class="small" id="dustMsg"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step locked" id="f2">
+      <span class="tag">STEP 2</span><h3>지문 모양(문형) 분류</h3>
+      <div class="row" id="patternRef" style="justify-content:center;margin-bottom:10px"></div>
+      <div id="fq1"></div>
+    </div>
+
+    <div class="step locked" id="f3">
+      <span class="tag">STEP 3</span><h3>용의자 지문과 특징점 대조</h3>
+      <p class="small">용의자를 골라 지문을 겹쳐 보세요. <span style="color:var(--red);font-weight:700">빨간 원</span> = 현장 지문의 특징점, <span style="color:var(--navy2);font-weight:700">파란 원</span> = 용의자 지문의 특징점.</p>
+      <div class="chips" id="fpChips"></div>
+      <div class="grid2" style="margin-top:10px">
+        <div class="svgbox"><div class="cap">현장 지문 + 용의자 특징점 겹치기</div><div id="overlayBox"></div></div>
+        <div class="svgbox"><div class="cap" id="susCap">용의자 지문</div><div id="susBox"></div><div class="readout" id="matchTxt">용의자를 선택하세요</div></div>
+      </div>
+      <div id="fq2" style="margin-top:12px"></div>
+    </div>
+    <div class="got" id="got1"></div>
+  </div>
+</section>
+
+<!-- ============ 2. DNA ============ -->
+<section id="s2">
+  <div class="card">
+    <h2>🧬 감식실 2 — DNA 분석</h2>
+    <p class="lead">증거물 ② 깨진 진열장 유리 조각 사이에 끼어 있던 머리카락(모근 있음)의 DNA를 분석합니다.</p>
+    <div class="sci"><b>과학 원리</b> — 사람마다 DNA에는 짧은 염기서열이 여러 번 반복되는 구간(<b>STR</b>)이 있고, 반복 횟수가 사람마다 달라 DNA 조각의 길이가 달라집니다.
+    DNA 조각을 젤(gel)에 넣고 전기를 걸면 DNA는 (−)전하를 띠기 때문에 (+)극 쪽으로 이동합니다. 이것을 <b>전기영동</b>이라고 합니다. 젤 속에서 조각마다 이동한 거리가 달라 <b>띠(밴드)</b> 무늬가 생기고, 무늬를 비교해 같은 사람인지 판단합니다.</div>
+
+    <div class="step" id="d1">
+      <span class="tag">STEP 1</span><h3>전기영동 실행</h3>
+      <div class="svgbox"><div class="cap">아가로스 젤 (위: (−)극 · 아래: (+)극) · 단위 bp = 염기쌍 수</div><div id="gelBox"></div></div>
+      <div class="row" style="margin-top:8px"><button class="btn" id="runGel">⚡ 전압 걸기</button><span class="small" id="gelMsg">시료를 홈(웰)에 넣었습니다. 전압을 걸어 보세요.</span></div>
+    </div>
+    <div class="step locked" id="d2">
+      <span class="tag">STEP 2</span><h3>결과 해석</h3>
+      <div id="dq1"></div>
+    </div>
+    <div class="step locked" id="d3">
+      <span class="tag">STEP 3</span><h3>일치하는 레인 찾기</h3>
+      <div id="dq2"></div>
+    </div>
+    <div class="got" id="got2"></div>
+  </div>
+</section>
+
+<!-- ============ 3. 족적 ============ -->
+<section id="s3">
+  <div class="card">
+    <h2>👣 감식실 3 — 족적 흔적 감정</h2>
+    <p class="lead">증거물 ③ 뒷문에서 2층 계단까지 이어진 진흙 발자국을 감정합니다.</p>
+    <div class="sci"><b>과학 원리</b> — 발자국(족적)의 <b>길이</b>로 신발 치수를, 발자국 사이의 거리인 <b>보폭</b>으로 키를 어림할 수 있습니다. 밑창 <b>무늬</b>는 신발 종류를, 닳은 자국은 걷는 습관을 알려 줍니다.<br>
+    <span class="small">이 활동의 어림 공식: 신발 치수 ≈ 족적 길이 − 15 mm · 키 ≈ 보폭 ÷ 0.415 (걸을 때 기준)</span></div>
+
+    <div class="step" id="k1">
+      <span class="tag">STEP 1</span><h3>족적 길이 재기</h3>
+      <p class="small">파란 자 두 개를 드래그해 <b>뒤꿈치 끝</b>과 <b>앞코 끝</b>에 맞추세요. (눈금 1칸 = 10 mm)</p>
+      <div class="svgbox"><div id="shoeBox"></div></div>
+      <div class="readout">측정 길이: <b id="shoeLen">-</b> mm</div>
+      <div id="kq1" style="margin-top:10px"></div>
+    </div>
+    <div class="step locked" id="k2">
+      <span class="tag">STEP 2</span><h3>보폭으로 키 추정하기</h3>
+      <div class="svgbox"><div id="strideBox"></div></div>
+      <div class="row" style="margin-top:8px">
+        <label>보폭 <input id="strideIn" type="number" step="1" style="width:80px;border:1px solid var(--line);border-radius:8px;padding:6px"> cm</label>
+        <button class="btn ghost" id="strideCalc">÷ 0.415 계산</button>
+        <span class="readout">추정 키: <b id="heightOut">-</b> cm</span>
+      </div>
+      <div id="kq2" style="margin-top:10px"></div>
+    </div>
+    <div class="step locked" id="k3">
+      <span class="tag">STEP 3</span><h3>밑창 무늬 대조</h3>
+      <div class="row" id="soleRow" style="gap:12px"></div>
+      <div id="kq3" style="margin-top:10px"></div>
+    </div>
+    <div class="got" id="got3"></div>
+  </div>
+</section>
+
+<!-- ============ 4. 문서 ============ -->
+<section id="s4">
+  <div class="card">
+    <h2>📝 감식실 4 — 문서 감정</h2>
+    <p class="lead">증거물 ④ 1층 화장실 쓰레기통에서 구겨진 메모가 발견되었습니다. 메모를 쓴 펜의 잉크를 분석합니다.</p>
+    <div class="grid2">
+      <div><div class="memo">23시 뒷문<br>경비는 잠들어 있을 것<br>3번 진열장 왼쪽 유리<small>증거물 ④ · 파란색 볼펜 글씨</small></div></div>
+      <div class="sci" style="margin:0"><b>과학 원리</b> — 볼펜 잉크는 여러 색소가 섞인 <b>혼합물</b>입니다. 종이 끝에 잉크 점을 찍고 용매(용액)에 담그면 용매가 종이를 타고 올라가며 색소를 끌고 갑니다. 색소마다 이동 속도가 달라 분리되는데, 이것이 <b>종이 크로마토그래피</b>입니다.<br>
+      <b>Rf값</b> = 색소가 이동한 거리 ÷ 용매가 이동한 거리 (같은 조건이면 같은 색소는 같은 Rf값)</div>
+    </div>
+    <div class="step" id="m1">
+      <span class="tag">STEP 1</span><h3>크로마토그래피 전개</h3>
+      <p class="small">메모의 잉크와, 용의자 4명이 가지고 있던 파란색 볼펜 잉크를 같은 조건에서 전개합니다.</p>
+      <div class="svgbox"><div id="chromBox"></div></div>
+      <div class="row" style="margin-top:8px"><button class="btn" id="runChrom">💧 용매에 담그기</button><span class="small" id="chromMsg"></span></div>
+    </div>
+    <div class="step locked" id="m2">
+      <span class="tag">STEP 2</span><h3>Rf값 계산</h3>
+      <div id="mq1"></div>
+    </div>
+    <div class="step locked" id="m3">
+      <span class="tag">STEP 3</span><h3>잉크 대조</h3>
+      <div id="mq2"></div>
+    </div>
+    <div class="got" id="got4"></div>
+  </div>
+</section>
+
+<!-- ============ 5. 디지털 ============ -->
+<section id="s5">
+  <div class="card">
+    <h2>💻 감식실 5 — 디지털 포렌식</h2>
+    <p class="lead">증거물 ⑤ 과학관 출입통제 서버, 방문객 Wi-Fi 기록, 용의자들이 수사에 협조해 제출한 기록을 분석합니다.</p>
+    <div class="sci"><b>과학 원리</b> — 디지털 기기는 언제, 어디서, 무엇을 했는지 <b>기록(로그)</b>을 남깁니다. 디지털 포렌식은 이 기록을 위·변조 없이 확보해 분석하는 기술입니다.
+    하지만 기록이 알려 주는 것은 <b>'어떤 카드·기기'가 사용되었는지</b>입니다. 그 순간 <b>'누가'</b> 쓰고 있었는지는 다른 증거로 확인해야 합니다.</div>
+    <div class="step" id="g1">
+      <span class="tag">STEP 1</span><h3>로그 분석기</h3>
+      <div class="row" style="margin-bottom:8px">
+        <div class="chips" id="srcChips"></div>
+      </div>
+      <div class="row" style="margin-bottom:8px">
+        <label class="small">시간대 <select id="timeSel" style="border:1px solid var(--line);border-radius:8px;padding:5px">
+          <option value="all">전체 (11/16 13:00 ~ 11/17 01:00)</option>
+          <option value="day">13:00 ~ 18:59</option>
+          <option value="eve">19:00 ~ 21:59</option>
+          <option value="night">22:00 이후</option>
+        </select></label>
+        <label class="small">검색 <input id="logSearch" placeholder="이름, 장소, 기기…" style="border:1px solid var(--line);border-radius:8px;padding:5px 8px"></label>
+        <span class="small" id="logCount"></span>
+      </div>
+      <div style="max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:10px">
+        <table class="logtbl"><thead><tr><th>시각</th><th>출처</th><th>내용</th></tr></thead><tbody id="logBody"></tbody></table>
+      </div>
+      <p class="small">행을 클릭하면 형광펜으로 표시됩니다.</p>
+      <div id="gq1"></div>
+    </div>
+    <div class="step locked" id="g2">
+      <span class="tag">STEP 2</span><h3>알리바이 확인</h3>
+      <div id="gq2"></div>
+    </div>
+    <div class="step locked" id="g3">
+      <span class="tag">STEP 3</span><h3>현장에 있던 기기</h3>
+      <div id="gq3"></div>
+    </div>
+    <div class="got" id="got5"></div>
+  </div>
+</section>
+
+<!-- ============ 6. 법의학 ============ -->
+<section id="s6">
+  <div class="card">
+    <h2>🩺 감식실 6 — 법의학</h2>
+    <p class="lead">증거물 ⑥ 경비원 정경수 씨의 혈액에서 <b>수면유도제 성분</b>이 검출되었습니다. 언제 몸에 들어왔는지 거꾸로 계산해 봅니다.</p>
+    <div class="sci"><b>과학 원리</b> — 몸에 들어온 약물은 흡수되어 혈중 농도가 최고에 이른 뒤, 간과 콩팥이 처리하면서 점점 줄어듭니다. 농도가 절반으로 줄어드는 데 걸리는 시간을 <b>반감기</b>라고 합니다.<br>
+    <span class="small">이 약물의 조건: 섭취 후 30분에 최고 농도 1.0 mg/L · 반감기 3시간 · 0.5 mg/L 이상이면 깊은 졸음<br>
+    측정값: <b>11월 17일 06:12 채혈 → 0.14 mg/L</b></span></div>
+    <div class="step" id="h1">
+      <span class="tag">STEP 1</span><h3>섭취 시각 역추적</h3>
+      <p class="small">슬라이더로 섭취 시각을 바꿔, 파란 곡선이 <span style="color:var(--red);font-weight:700">빨간 측정점</span>을 지나도록 맞춰 보세요.</p>
+      <div class="svgbox"><div id="pkBox"></div></div>
+      <input type="range" id="pkSlider" min="0" max="330" step="2" value="60">
+      <div class="readout">섭취 시각 <b id="pkT">-</b> · 06:12 예상 농도 <b id="pkC">-</b> mg/L · <span id="pkOk"></span></div>
+      <div id="hq1" style="margin-top:10px"></div>
+    </div>
+    <div class="step locked" id="h2">
+      <span class="tag">STEP 2</span><h3>경비실 CCTV 기록과 대조</h3>
+      <table>
+        <tr><th>시각</th><th>경비실 CCTV 내용</th></tr>
+        <tr><td>19:30</td><td>오세라(카페 매니저)가 따뜻한 커피 1잔을 전달. 경비원이 바로 마심.</td></tr>
+        <tr><td>21:12</td><td>박태준(설치업체 기사)이 "두고 간 공구를 찾으러 왔다"며 방문. 에너지음료 1캔을 건넴. 경비원이 마심.</td></tr>
+        <tr><td>21:20</td><td>박태준, 정문으로 나감.</td></tr>
+        <tr><td>21:50</td><td>경비원이 의자에 기대어 잠듦. 이후 06:00까지 움직임 없음.</td></tr>
+      </table>
+      <div id="hq2" style="margin-top:10px"></div>
+    </div>
+    <div class="got" id="got6"></div>
+  </div>
+</section>
+
+<!-- ============ 최종 추리 ============ -->
+<section id="s7">
+  <div class="card">
+    <h2>⚖️ 최종 추리</h2>
+    <p class="lead">모은 증거를 바탕으로 범인을 지목하세요. 과학수사의 원칙: <b>하나의 증거로 단정하지 말고, 여러 증거가 서로 맞아떨어지는지 확인한다.</b></p>
+    <div id="finalWarn" class="warn"></div>
+    <h3 style="margin-top:12px">1. 범인으로 지목할 사람</h3>
+    <div class="lanepick" id="accuse"></div>
+    <h3 style="margin-top:14px">2. 근거가 되는 증거 (해당하는 것 모두)</h3>
+    <div id="evPick" class="chips"></div>
+    <h3 style="margin-top:14px">3. 우리 팀의 추리 (한두 문장)</h3>
+    <textarea id="reason" placeholder="예: ○○○는 … 증거로 보아 …했다. 출입카드 기록은 …"></textarea>
+    <div class="row" style="margin-top:10px"><button class="btn" id="accuseBtn">🔨 범인 지목</button></div>
+    <div id="verdict"></div>
+  </div>
+</section>
+
+</main>
+
+<aside>
+  <div class="card">
+    <h3>📒 수사 노트</h3>
+    <div id="evList"><p class="empty">아직 확보한 증거가 없습니다.</p></div>
+    <h3 style="margin-top:14px">✏️ 용의자 체크표</h3>
+    <p class="small" style="margin:0 0 6px">칸을 눌러 표시: ○ 일치 · × 불일치 · ? 애매</p>
+    <table class="mtx" id="mtx"></table>
+  </div>
+</aside>
+</div>
+
+<script>
+/* ---------------- 데이터 ---------------- */
+const S = [
+ {id:'A',name:'강민호',role:'과학관 학예사(전시 담당)',age:39,h:181,shoe:270,fp:'loop',col:'#3b6fd8',
+  say:'"오후 4시쯤 퇴근해서 밤새 집에 있었어요. 그러고 보니 오후에 출입카드를 잃어버렸네요."'},
+ {id:'B',name:'윤채린',role:'야간 청소 용역',age:44,h:158,shoe:235,fp:'whorl',col:'#2a9d6e',
+  say:'"밤 9시 반에 청소 마치고 바로 퇴근했어요."'},
+ {id:'C',name:'박태준',role:'전시 설치업체 기사',age:35,h:174,shoe:265,fp:'loop',col:'#e07a1f',
+  say:'"오후에 진열장 조명을 설치하고 6시에 철수했습니다. 그 뒤론 과학관에 간 적 없어요."'},
+ {id:'D',name:'오세라',role:'1층 카페 매니저',age:29,h:166,shoe:250,fp:'arch',col:'#b34fc4',
+  say:'"7시 반에 경비 아저씨께 늘 드리던 커피를 갖다드리고 8시 10분에 퇴근했어요."'}
+];
+const ST = [
+ {n:1,ic:'🖐️',t:'지문 감식',d:'분말법 · 문형 · 특징점'},
+ {n:2,ic:'🧬',t:'DNA 분석',d:'STR · 전기영동'},
+ {n:3,ic:'👣',t:'족적 감정',d:'길이 · 보폭 · 밑창'},
+ {n:4,ic:'📝',t:'문서 감정',d:'크로마토그래피 · Rf'},
+ {n:5,ic:'💻',t:'디지털 포렌식',d:'출입 · Wi-Fi · 위치 로그'},
+ {n:6,ic:'🩺',t:'법의학',d:'독성 검사 · 반감기'}
+];
+const EV = {
+ 1:'드라이버 지문 = 제상문, 특징점 6/6 일치 → 박태준. ※ 박태준 회사 공구라 "설치 때 남긴 것"이라 주장할 수 있어 단독으로는 결정적이지 않음.',
+ 2:'깨진 유리 사이 머리카락의 STR 밴드 5개 모두 일치 → 박태준. 유리가 깨질 때(범행 시점) 남은 것으로 보임.',
+ 3:'족적 280 mm → 신발 약 265 mm · 보폭 72 cm → 키 약 174 cm · 작업화 블록 무늬 → 박태준과 일치.',
+ 4:'메모 잉크 = 파랑(Rf 0.35) + 분홍(Rf 0.72) → 박태준의 볼펜 잉크와 일치.',
+ 5:'23:04 뒷문을 연 것은 강민호 카드(16:05 분실 신고). 강민호는 그 시각 자택에 있었음. 23:01 박태준 휴대폰이 과학관 Wi-Fi에 접속.',
+ 6:'수면유도제 섭취 시각 ≈ 21:10 → 박태준이 건넨 에너지음료. "6시 이후 간 적 없다"는 진술과 모순. 오세라의 19:30 커피는 시각이 맞지 않음.'
+};
+const done = {};
+const stepOrder = {1:['f1','f2','f3'],2:['d1','d2','d3'],3:['k1','k2','k3'],4:['m1','m2','m3'],5:['g1','g2','g3'],6:['h1','h2']};
+const $ = id => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+
+/* ---------------- 공통: 탭, 퀴즈, 진행 ---------------- */
+const tabNames = ['📁 브리핑', ...ST.map(s=>`${s.ic} ${s.n}. ${s.t}`), '⚖️ 최종 추리'];
+function buildTabs(){
+  $('tabs').innerHTML = tabNames.map((t,i)=>`<button data-i="${i}">${t}</button>`).join('');
+  $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>go(+b.dataset.i));
+}
+function go(i){
+  document.querySelectorAll('main section').forEach((s,k)=>s.classList.toggle('on',k===i));
+  $('tabs').querySelectorAll('button').forEach((b,k)=>b.classList.toggle('on',k===i));
+  if(i===7) refreshFinal();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function quiz(id,q,onOK){
+  const el=$(id);
+  el.innerHTML=`<div class="q"><div class="qt">❓ ${q.q}</div><div class="opts">${q.o.map((o,i)=>`<button data-i="${i}">${o}</button>`).join('')}</div><div class="fb"></div></div>`;
+  const fb=el.querySelector('.fb');
+  el.querySelectorAll('.opts button').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;
+    if(i===q.a){
+      b.classList.add('ok'); fb.className='fb ok'; fb.innerHTML='✔ '+q.ok;
+      el.querySelectorAll('.opts button').forEach(x=>x.disabled=true);
+      onOK&&onOK();
+    } else {
+      b.classList.add('no'); b.disabled=true; fb.className='fb no';
+      fb.innerHTML='✘ '+((q.no&&q.no[i])||q.hint||'다시 생각해 보세요.');
+    }
+  });
+}
+function unlock(id){ $(id).classList.remove('locked'); }
+function complete(n){
+  if(done[n]) return;
+  done[n]=true;
+  const g=$('got'+n); g.innerHTML='🏅 증거 카드 획득! '+EV[n]; g.classList.add('show');
+  $('tabs').querySelectorAll('button')[n].classList.add('done');
+  const c=Object.keys(done).length;
+  $('progTxt').textContent=c+'/6'; $('progBar').style.width=(c/6*100)+'%';
+  renderNotes();
+}
+function renderNotes(){
+  const ks=Object.keys(done).sort();
+  $('evList').innerHTML = ks.length? ks.map(k=>`<div class="ev"><b>${ST[k-1].ic} ${ST[k-1].t}</b>${EV[k]}</div>`).join('') : '<p class="empty">아직 확보한 증거가 없습니다.</p>';
+}
+function buildMatrix(){
+  let h='<tr><th></th>'+ST.map(s=>`<th title="${s.t}">${s.ic}</th>`).join('')+'</tr>';
+  S.forEach(s=>{ h+=`<tr><th style="text-align:left">${s.id} ${s.name}</th>`+ST.map(()=>'<td class="c"></td>').join('')+'</tr>'; });
+  $('mtx').innerHTML=h;
+  const cyc=['','○','×','?'], cls=['','o','x','q'];
+  $('mtx').querySelectorAll('td.c').forEach(td=>{ td.dataset.k=0; td.onclick=()=>{ const k=(+td.dataset.k+1)%4; td.dataset.k=k; td.textContent=cyc[k]; td.className='c '+cls[k]; }; });
+}
+function buildBrief(){
+  $('suspects').innerHTML=S.map(s=>`<div class="scard"><div class="av" style="background:${s.col}">${s.id}</div><div class="nm">${s.name}</div><div class="role">${s.role}</div>
+   <dl><dt>나이</dt><dd style="margin:0">${s.age}세</dd><dt>키</dt><dd style="margin:0">${s.h} cm</dd><dt>신발 치수</dt><dd style="margin:0">${s.shoe} mm</dd></dl><div class="say">${s.say}</div></div>`).join('');
+  $('stgrid').innerHTML=ST.map(s=>`<div class="st" data-n="${s.n}"><div class="ic">${s.ic}</div><div class="t">${s.n}. ${s.t}</div><div class="d">${s.d}</div></div>`).join('');
+  $('stgrid').querySelectorAll('.st').forEach(e=>e.onclick=()=>go(+e.dataset.n));
+}
+
+/* ---------------- 1. 지문 ---------------- */
+const MIN = {
+  scene:[[78,118],[132,96],[152,172],[94,204],[122,148],[66,166]],
+  A:[[80,116],[164,112],[140,196],[100,74],[58,206],[128,222]],
+  C:[[78,118],[132,96],[152,172],[94,204],[122,148],[66,166]],
+};
+function ridges(type){
+  let p=''; const cx=110, cy=150;
+  if(type==='loop'){
+    for(let i=0;i<14;i++){const w=6+i*7; p+=`<path d="M ${cx-w} 300 L ${cx-w} ${cy} A ${w} ${w} 0 0 1 ${cx+w} ${cy} L ${cx+w} ${cy+15} Q ${cx+w} ${cy+60} ${cx+w-35} 300"/>`;}
+    for(let y=46;y>-30;y-=7) p+=`<path d="M -10 ${y+70} Q 110 ${y-35} 230 ${y+70}"/>`;
+  } else if(type==='whorl'){
+    for(let i=0;i<16;i++) p+=`<ellipse cx="${cx}" cy="${cy}" rx="${5+i*7.5}" ry="${7+i*9}"/>`;
+  } else {
+    for(let y=6;y<310;y+=7){const a=48*Math.max(0,1-Math.abs(y-150)/175); p+=`<path d="M -10 ${y} Q 110 ${y-2*a} 230 ${y}"/>`;}
+  }
+  return p;
+}
+function fpSVG(type,o={}){
+  const id='c'+Math.random().toString(36).slice(2,7);
+  const w=o.w||220;
+  const gaps=(o.gaps||[]).map(([x,y])=>`<line x1="${x-3}" y1="${y-3}" x2="${x+3}" y2="${y+3}" stroke="#fff" stroke-width="5"/>`).join('');
+  const mk=(arr,col,dash)=>(arr||[]).map(([x,y])=>`<circle cx="${x}" cy="${y}" r="8" fill="none" stroke="${col}" stroke-width="2.5" ${dash?'stroke-dasharray="4 3"':''}/>`).join('');
+  return `<svg viewBox="0 0 220 300" width="${w}" xmlns="${NS}"><defs><clipPath id="${id}"><ellipse cx="110" cy="150" rx="96" ry="132"/></clipPath></defs>
+  <g clip-path="url(#${id})"><rect width="220" height="300" fill="${o.bg||'#fff'}"/><g fill="none" stroke="${o.stroke||'#2c2f36'}" stroke-width="3.2" opacity="${o.op??1}" class="${o.cls||''}">${ridges(type)}</g>${gaps}</g>
+  <ellipse cx="110" cy="150" rx="96" ry="132" fill="none" stroke="#c9ced8"/>
+  ${mk(o.marks,'#d6336c')}${mk(o.marks2,'#2f4fb5',true)}</svg>`;
+}
+function initFP(){
+  $('latentBox').innerHTML=fpSVG('loop',{bg:'#e9e3d6',stroke:'#3a3a3a',op:0.04,cls:'lat',gaps:MIN.scene});
+  $('dustBtn').onclick=()=>{
+    const g=$('latentBox').querySelector('.lat'); let k=0;
+    $('dustBtn').disabled=true; $('dustMsg').textContent='분말이 땀·기름 성분에 달라붙고 있습니다…';
+    const t=setInterval(()=>{k++; g.setAttribute('opacity',Math.min(0.95,0.04+k*0.06)); if(k>=16){clearInterval(t); $('dustMsg').textContent='✔ 잠재지문이 드러났습니다! 이제 특징점(융선이 끊긴 곳)을 표시해 보세요.'; $('markBtn').disabled=false;}},90);
+  };
+  $('markBtn').onclick=()=>{
+    $('latentBox').innerHTML=fpSVG('loop',{bg:'#e9e3d6',stroke:'#3a3a3a',op:0.95,gaps:MIN.scene,marks:MIN.scene});
+    $('markBtn').disabled=true; $('dustMsg').textContent='✔ 특징점 6개를 표시했습니다. 다음 단계로!';
+    unlock('f2');
+  };
+  $('patternRef').innerHTML=[['arch','궁상문(활 모양)'],['loop','제상문(말발굽 모양)'],['whorl','와상문(소용돌이 모양)']]
+    .map(([t,n])=>`<div class="svgbox" style="width:150px">${fpSVG(t,{w:110})}<div class="small">${n}</div></div>`).join('');
+  quiz('fq1',{q:'현장 지문은 어떤 문형인가요?',o:['궁상문','제상문','와상문'],a:1,
+    ok:'제상문입니다. 용의자 중 제상문은 <b>강민호(A)</b>와 <b>박태준(C)</b>뿐! 윤채린(B)은 와상문, 오세라(D)는 궁상문이라 문형부터 다릅니다.',
+    no:{0:'궁상문은 융선이 한쪽에서 들어와 반대쪽으로 활처럼 빠져나갑니다. 현장 지문의 융선은 다시 돌아 나가나요?',2:'와상문은 중심을 동그랗게 감싸는 소용돌이 모양입니다.'}},
+    ()=>{unlock('f3');});
+  $('fpChips').innerHTML=S.map(s=>`<button class="chip" data-id="${s.id}">${s.id} ${s.name}</button>`).join('');
+  $('overlayBox').innerHTML=fpSVG('loop',{gaps:MIN.scene,marks:MIN.scene,w:200});
+  $('susBox').innerHTML='<div class="small" style="padding:60px 0">←  위에서 용의자를 고르세요</div>';
+  $('fpChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    $('fpChips').querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));
+    const s=S.find(x=>x.id===c.dataset.id);
+    const pts=MIN[s.id];
+    $('susCap').textContent=`${s.id} ${s.name}의 지문 (오른손 검지)`;
+    $('susBox').innerHTML=fpSVG(s.fp,{gaps:pts||[],marks2:pts,w:170});
+    if(!pts){ $('overlayBox').innerHTML=fpSVG('loop',{gaps:MIN.scene,marks:MIN.scene,w:200}); $('matchTxt').innerHTML=`문형 불일치(${s.fp==='whorl'?'와상문':'궁상문'}) → <b>비교 대상에서 제외</b>`; return; }
+    $('overlayBox').innerHTML=fpSVG('loop',{gaps:MIN.scene,marks:MIN.scene,marks2:pts,w:200});
+    const m=MIN.scene.filter(([x,y])=>pts.some(([a,b])=>Math.hypot(x-a,y-b)<8)).length;
+    $('matchTxt').innerHTML=`일치하는 특징점: <b>${m} / 6</b> 개`;
+  });
+  quiz('fq2',{q:'현장 드라이버의 지문과 일치하는 사람은?',o:S.map(s=>`${s.id} ${s.name}`),a:2,
+    ok:'박태준(C)의 지문과 특징점 6개가 모두 일치합니다. 하지만 이 드라이버는 박태준 회사의 공구예요. "낮에 설치하다 두고 갔다"고 주장할 수 있으니 <b>다른 증거로 확인</b>이 필요합니다.',
+    hint:'용의자를 하나씩 겹쳐 보고 빨간 원과 파란 원이 정확히 겹치는 개수를 세어 보세요.'},()=>complete(1));
+}
+
+/* ---------------- 2. DNA ---------------- */
+const LANES=[
+  {n:'래더',b:[100,150,200,250,300,400,500,600],c:'#7a8396'},
+  {n:'현장 시료',b:[120,180,230,310,410],c:'#c2255c'},
+  {n:'A 강민호',b:[140,180,260,310,450],c:'#1f3a8a'},
+  {n:'B 윤채린',b:[110,200,230,350,390],c:'#1f3a8a'},
+  {n:'C 박태준',b:[120,180,230,310,410],c:'#1f3a8a'},
+  {n:'D 오세라',b:[130,170,240,330,410],c:'#1f3a8a'}
+];
+const gy=bp=>70+(Math.log(700)-Math.log(bp))/(Math.log(700)-Math.log(90))*280;
+function initDNA(){
+  const W=580,H=380; let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" xmlns="${NS}">
+   <rect x="40" y="30" width="${W-50}" height="${H-40}" rx="8" fill="#e6eef9" stroke="#b9c7de"/>
+   <text x="18" y="46" font-size="15" fill="#c0392b" font-weight="700">−</text><text x="16" y="${H-14}" font-size="15" fill="#1f8a4c" font-weight="700">+</text>`;
+  LANES.forEach((l,i)=>{const x=75+i*85;
+    s+=`<text x="${x+22}" y="22" font-size="12.5" text-anchor="middle" fill="#333" font-weight="700">${l.n}</text><rect x="${x}" y="40" width="44" height="10" rx="2" fill="#c3cfe2"/>`;
+    l.b.forEach((bp,j)=>{s+=`<rect class="band" data-y="${gy(bp)}" x="${x}" y="45" width="44" height="6" rx="2" fill="${l.c}" opacity="0"/>`;
+      if(i===0) s+=`<text class="lbl" x="${x-6}" y="${gy(bp)+5}" font-size="10" text-anchor="end" fill="#666" opacity="0">${bp}</text>`;});
+  });
+  s+='</svg>'; $('gelBox').innerHTML=s;
+  $('runGel').onclick=()=>{
+    $('runGel').disabled=true; $('gelMsg').textContent='DNA 조각이 (+)극 쪽으로 이동 중…';
+    const bands=[...$('gelBox').querySelectorAll('.band')]; const t0=performance.now(), D=2600;
+    bands.forEach(b=>b.setAttribute('opacity',0.9));
+    (function f(t){const p=Math.min(1,(t-t0)/D);
+      bands.forEach(b=>b.setAttribute('y',45+(+b.dataset.y-45)*p));
+      if(p<1) requestAnimationFrame(f); else {$('gelBox').querySelectorAll('.lbl').forEach(e=>e.setAttribute('opacity',1)); $('gelMsg').textContent='✔ 전기영동 완료! 래더(크기 기준자)의 숫자는 조각의 크기(bp)입니다.'; unlock('d2');}
+    })(t0);
+  };
+  quiz('dq1',{q:'젤의 아래쪽(+극 쪽)까지 멀리 이동한 밴드는 어떤 DNA 조각일까요?',o:['크기가 큰(긴) 조각','크기가 작은(짧은) 조각','색이 진한 조각'],a:1,
+    ok:'맞아요. 젤은 촘촘한 그물 같아서 <b>작은 조각일수록 빠져나가기 쉬워 더 멀리</b> 이동합니다.',
+    no:{0:'긴 조각은 젤의 그물망에 더 많이 걸립니다. 래더의 숫자를 확인해 보세요.',2:'밴드의 진하기는 DNA 양과 관련이 있어요. 이동 거리는 무엇에 따라 달라질까요?'}},()=>unlock('d3'));
+  quiz('dq2',{q:'현장 시료(머리카락)와 밴드 무늬가 완전히 같은 사람은?',o:S.map(s=>`${s.id} ${s.name}`),a:2,
+    ok:'박태준(C)의 5개 밴드가 모두 같은 위치입니다. 머리카락은 <b>깨진 유리 조각 사이</b>에서 나왔으니, 유리가 깨질 때(범행 시점) 현장에 있었을 가능성이 높습니다.',
+    hint:'현장 시료의 밴드 5개와 높이가 하나도 빠짐없이 같은 레인을 찾으세요. 하나라도 다르면 다른 사람입니다.'},()=>complete(2));
+}
+
+/* ---------------- 3. 족적 ---------------- */
+function initShoe(){
+  const W=660,H=250, X0=40, X1=600; // 560px = 280mm (2px/mm)
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" xmlns="${NS}" id="shoeSvg" style="touch-action:none">
+   <rect width="${W}" height="${H}" fill="#f4efe6"/>
+   <defs><clipPath id="sole"><ellipse cx="112" cy="105" rx="72" ry="56"/><rect x="150" y="68" width="230" height="72" rx="30"/><ellipse cx="470" cy="105" rx="130" ry="80"/></clipPath>
+   <pattern id="blk" width="22" height="18" patternUnits="userSpaceOnUse"><rect x="2" y="2" width="16" height="12" rx="2" fill="#5e432b"/></pattern></defs>
+   <g clip-path="url(#sole)"><rect width="${W}" height="${H}" fill="#8b6b4a"/><rect width="${W}" height="${H}" fill="url(#blk)" opacity=".85"/></g>`;
+  // ruler
+  s+=`<line x1="${X0-20}" y1="210" x2="${X1+30}" y2="210" stroke="#555"/>`;
+  for(let mm=-10;mm<=295;mm+=10){const x=X0+mm*2; s+=`<line x1="${x}" y1="210" x2="${x}" y2="${mm%50===0?196:202}" stroke="#555"/>`; if(mm%50===0&&mm>=0) s+=`<text x="${x}" y="228" font-size="11" text-anchor="middle" fill="#444">${mm/10}cm</text>`;}
+  s+=`<g class="hd" data-k="0"><line x1="0" y1="10" x2="0" y2="210" stroke="#2f4fb5" stroke-width="3"/><rect x="-11" y="2" width="22" height="18" rx="4" fill="#2f4fb5"/><text x="0" y="15" font-size="11" fill="#fff" text-anchor="middle">◀▶</text></g>
+       <g class="hd" data-k="1"><line x1="0" y1="10" x2="0" y2="210" stroke="#2f4fb5" stroke-width="3"/><rect x="-11" y="2" width="22" height="18" rx="4" fill="#2f4fb5"/><text x="0" y="15" font-size="11" fill="#fff" text-anchor="middle">◀▶</text></g></svg>`;
+  $('shoeBox').innerHTML=s;
+  const svg=$('shoeSvg'), hs=[...svg.querySelectorAll('.hd')], pos=[110,520];
+  const draw=()=>{hs.forEach((h,i)=>h.setAttribute('transform',`translate(${pos[i]},0)`)); $('shoeLen').textContent=Math.round(Math.abs(pos[1]-pos[0])/2);};
+  draw(); let drag=-1;
+  hs.forEach((h,i)=>{h.style.cursor='ew-resize'; h.addEventListener('pointerdown',e=>{drag=i; svg.setPointerCapture(e.pointerId);});});
+  svg.addEventListener('pointermove',e=>{ if(drag<0)return; const pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY; const p=pt.matrixTransform(svg.getScreenCTM().inverse()); pos[drag]=Math.max(10,Math.min(W-10,p.x)); draw(); });
+  svg.addEventListener('pointerup',()=>drag=-1);
+  quiz('kq1',{q:'측정한 족적 길이로 추정한 신발 치수는? (치수 ≈ 족적 길이 − 15 mm)',o:['235 mm','250 mm','265 mm','270 mm'],a:2,
+    ok:'족적 길이 약 280 mm − 15 mm ≈ <b>265 mm</b>. 신발 치수가 265 mm인 용의자는 박태준(C)입니다. (강민호 270 mm는 조금 큽니다.)',
+    hint:'자를 뒤꿈치 가장 뒤와 앞코 가장 앞에 정확히 맞춘 뒤, 측정 길이에서 15를 빼 보세요.'},()=>unlock('k2'));
+
+  // stride
+  let t=`<svg viewBox="0 0 660 150" width="660" xmlns="${NS}"><rect width="660" height="150" fill="#f4efe6"/>`;
+  const foot=(x,y,flip)=>`<g transform="translate(${x},${y}) ${flip?'scale(1,-1)':''}"><ellipse cx="0" cy="0" rx="14" ry="11" fill="#8b6b4a"/><rect x="8" y="-11" width="40" height="22" rx="10" fill="#8b6b4a"/><ellipse cx="62" cy="0" rx="26" ry="16" fill="#8b6b4a"/></g>`;
+  t+=foot(40,95)+foot(250,55,true)+foot(460,95);
+  t+=`<line x1="26" y1="128" x2="446" y2="128" stroke="#c0392b" stroke-width="2"/><line x1="26" y1="118" x2="26" y2="138" stroke="#c0392b" stroke-width="2"/><line x1="446" y1="118" x2="446" y2="138" stroke="#c0392b" stroke-width="2"/>
+     <text x="236" y="146" text-anchor="middle" font-size="13" fill="#c0392b" font-weight="700">같은 발 뒤꿈치 ~ 다음 같은 발 뒤꿈치: 144 cm</text>
+     <line x1="26" y1="22" x2="236" y2="22" stroke="#2f4fb5" stroke-width="2"/><line x1="26" y1="14" x2="26" y2="30" stroke="#2f4fb5" stroke-width="2"/><line x1="236" y1="14" x2="236" y2="30" stroke="#2f4fb5" stroke-width="2"/>
+     <text x="300" y="27" font-size="13" fill="#2f4fb5" font-weight="700">보폭(왼발→오른발 뒤꿈치) = ?</text></svg>`;
+  $('strideBox').innerHTML=t;
+  $('strideCalc').onclick=()=>{const v=parseFloat($('strideIn').value); $('heightOut').textContent=isFinite(v)&&v>0?(v/0.415).toFixed(1):'-';};
+  quiz('kq2',{q:'보폭은 몇 cm이고, 추정 키는 어느 용의자와 가장 가까운가요?',o:['보폭 144 cm → 강민호(181 cm)','보폭 72 cm → 박태준(174 cm)','보폭 72 cm → 오세라(166 cm)','보폭 60 cm → 윤채린(158 cm)'],a:1,
+    ok:'보폭은 왼발과 오른발 사이 거리이므로 144 ÷ 2 = <b>72 cm</b>. 72 ÷ 0.415 ≈ <b>173.5 cm</b> → 박태준(174 cm)과 가장 가깝습니다.',
+    no:{0:'144 cm는 같은 발끼리의 거리(두 걸음)입니다. 한 걸음은?',2:'72 ÷ 0.415를 계산기로 직접 계산해 보세요.',3:'그림에서 보폭을 다시 구해 보세요. 144 cm는 두 걸음입니다.'}},()=>unlock('k3'));
+
+  // soles
+  const soles=[
+    {k:'scene',n:'현장 족적',p:`<pattern id="p0" width="22" height="18" patternUnits="userSpaceOnUse"><rect x="2" y="2" width="16" height="12" rx="2" fill="#5e432b"/></pattern>`,bg:'#8b6b4a'},
+    {k:'A',n:'A 강민호 · 구두',p:`<pattern id="p1" width="10" height="14" patternUnits="userSpaceOnUse"><rect width="10" height="3" fill="#33363d"/></pattern>`,bg:'#6b6f78'},
+    {k:'B',n:'B 윤채린 · 운동화',p:`<pattern id="p2" width="24" height="12" patternUnits="userSpaceOnUse"><path d="M0 6 Q6 0 12 6 T24 6" stroke="#33363d" stroke-width="3" fill="none"/></pattern>`,bg:'#6b6f78'},
+    {k:'C',n:'C 박태준 · 작업화',p:`<pattern id="p3" width="22" height="18" patternUnits="userSpaceOnUse"><rect x="2" y="2" width="16" height="12" rx="2" fill="#33363d"/></pattern>`,bg:'#6b6f78'},
+    {k:'D',n:'D 오세라 · 운동화',p:`<pattern id="p4" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="4.5" fill="#33363d"/></pattern>`,bg:'#6b6f78'}
+  ];
+  $('soleRow').innerHTML=soles.map((s,i)=>`<div class="svgbox" style="width:120px${i===0?';border:2px solid #c0392b':''}"><svg viewBox="0 0 100 220" width="80" xmlns="${NS}"><defs>${s.p}<clipPath id="sc${i}"><ellipse cx="50" cy="65" rx="40" ry="58"/><rect x="18" y="90" width="64" height="70"/><ellipse cx="50" cy="175" rx="30" ry="38"/></clipPath></defs>
+    <g clip-path="url(#sc${i})"><rect width="100" height="220" fill="${s.bg}"/><rect width="100" height="220" fill="url(#p${i})"/></g></svg><div class="small" style="font-weight:700">${s.n}</div></div>`).join('');
+  quiz('kq3',{q:'현장 족적의 밑창 무늬와 같은 신발을 신은 사람은?',o:S.map(s=>`${s.id} ${s.name}`),a:2,
+    ok:'네모난 블록이 줄지어 있는 <b>작업화</b> 무늬 — 박태준(C)의 신발과 일치합니다. 길이·보폭·무늬 세 가지가 모두 한 사람을 가리킵니다.',
+    hint:'현장 족적(빨간 테두리)의 무늬 모양(블록·줄·물결·동그라미)을 비교해 보세요.'},()=>complete(3));
+}
+
+/* ---------------- 4. 문서 ---------------- */
+const INK=[
+  {n:'메모',s:[{c:'#2448c9',r:.35},{c:'#e0479e',r:.72}]},
+  {n:'A 강민호',s:[{c:'#2448c9',r:.35},{c:'#e6b800',r:.86}]},
+  {n:'B 윤채린',s:[{c:'#1a1a1a',r:.18},{c:'#3b7ddd',r:.55}]},
+  {n:'C 박태준',s:[{c:'#2448c9',r:.35},{c:'#e0479e',r:.72}]},
+  {n:'D 오세라',s:[{c:'#6a3fb5',r:.48}]}
+];
+function initDoc(){
+  const W=560,H=330, Y0=270, TRAVEL=210;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" xmlns="${NS}"><rect x="0" y="292" width="${W}" height="38" fill="#cfe3f7"/><text x="${W-8}" y="318" text-anchor="end" font-size="12" fill="#335">용매</text>`;
+  INK.forEach((k,i)=>{const x=50+i*100;
+    s+=`<rect x="${x}" y="30" width="60" height="275" fill="#fff" stroke="#c9ced8"/><rect class="wet" x="${x}" y="${Y0+30}" width="60" height="5" fill="#d8ebfb"/>
+    <line x1="${x}" y1="${Y0}" x2="${x+60}" y2="${Y0}" stroke="#999" stroke-dasharray="3 3"/>
+    <text x="${x+30}" y="22" font-size="12.5" text-anchor="middle" font-weight="700" fill="${i===0?'#c0392b':'#333'}">${k.n}</text>`;
+    k.s.forEach(sp=>{s+=`<ellipse class="spot" data-r="${sp.r}" cx="${x+30}" cy="${Y0}" rx="7" ry="5" fill="${sp.c}" opacity=".85"/>`;});
+  });
+  s+=`<line id="front" x1="40" y1="${Y0}" x2="${W-44}" y2="${Y0}" stroke="#2f7fd1" stroke-width="1.5" stroke-dasharray="6 4" opacity="0"/><text id="frontT" x="${W-4}" y="${Y0}" font-size="11" text-anchor="end" fill="#2f7fd1" opacity="0">최전선</text>
+  <text x="${W-38}" y="${Y0+4}" font-size="11" fill="#777">출발선</text></svg>`;
+  $('chromBox').innerHTML=s;
+  $('runChrom').onclick=()=>{
+    $('runChrom').disabled=true; $('chromMsg').textContent='용매가 종이를 타고 올라가는 중…';
+    const spots=[...$('chromBox').querySelectorAll('.spot')], wets=[...$('chromBox').querySelectorAll('.wet')], fr=$('front'), ft=$('frontT');
+    fr.setAttribute('opacity',1); ft.setAttribute('opacity',1);
+    const t0=performance.now(), D=4200;
+    (function f(t){const p=Math.min(1,(t-t0)/D), fy=Y0-TRAVEL*p;
+      wets.forEach(w=>{w.setAttribute('y',fy); w.setAttribute('height',305-fy);});
+      fr.setAttribute('y1',fy); fr.setAttribute('y2',fy); ft.setAttribute('y',fy-4);
+      spots.forEach(sp=>{sp.setAttribute('cy',Y0-TRAVEL*p*(+sp.dataset.r)); sp.setAttribute('ry',5+6*p); sp.setAttribute('rx',7+3*p);});
+      if(p<1) requestAnimationFrame(f); else {$('chromMsg').textContent='✔ 전개 완료! 색소가 분리되었습니다.'; unlock('m2');}
+    })(t0);
+  };
+  quiz('mq1',{q:'용매가 출발선에서 10.0 cm 올라갔고, 메모의 분홍색 색소는 7.2 cm 올라갔습니다. 분홍색 색소의 Rf값은?',o:['0.28','0.72','1.39','7.2'],a:1,
+    ok:'Rf = 7.2 ÷ 10.0 = <b>0.72</b>. Rf값은 항상 0과 1 사이입니다(색소가 용매보다 더 멀리 갈 수는 없으니까요).',
+    no:{0:'0.28은 1 − 0.72입니다. 공식은 색소 이동 거리 ÷ 용매 이동 거리예요.',2:'나누는 순서가 바뀌었어요. 색소 ÷ 용매입니다.',3:'7.2는 이동 거리 자체입니다. 용매 이동 거리로 나눠야 해요.'}},()=>unlock('m3'));
+  quiz('mq2',{q:'메모의 잉크(파랑 Rf 0.35 + 분홍 Rf 0.72)와 같은 잉크를 쓰는 볼펜의 주인은?',o:S.map(s=>`${s.id} ${s.name}`),a:2,
+    ok:'박태준(C)의 볼펜 잉크와 색소 구성·Rf값이 모두 같습니다. 강민호(A)의 펜도 파란 색소(Rf 0.35)는 같지만 노란 색소가 나와서 다른 잉크예요. ※ 같은 제품 볼펜은 누구나 살 수 있으므로 <b>다른 증거를 뒷받침하는 증거</b>로 씁니다.',
+    hint:'색소의 개수, 색, 높이(Rf값)가 메모와 모두 같은 줄을 찾으세요. 하나만 같아서는 안 됩니다.'},()=>complete(4));
+}
+
+/* ---------------- 5. 디지털 ---------------- */
+const SRC={card:{n:'출입카드',c:'#1f3a8a'},wifi:{n:'Wi-Fi',c:'#0f8a8a'},admin:{n:'행정시스템',c:'#7a5af5'},phone:{n:'휴대폰 위치',c:'#e07a1f'},tv:{n:'IPTV',c:'#b34fc4'},cctv:{n:'정문 CCTV',c:'#5d6678'}};
+const LOGS=[
+ ['13:10','admin','방문자 등록: 박태준(한결전시설치) · 휴대폰 "TJ-Galaxy-S24" 방문객 Wi-Fi 등록'],
+ ['13:12','wifi','방문객 Wi-Fi 접속: TJ-Galaxy-S24 (2층 AP)'],
+ ['14:02','card','2층 특별전시실 출입: 강민호 카드'],
+ ['15:20','card','지하 창고 출입: 강민호 카드 (설치 자재 확인)'],
+ ['15:22','wifi','방문객 Wi-Fi 접속: TJ-Galaxy-S24 (지하 AP)'],
+ ['16:00','cctv','강민호 정문으로 퇴근'],
+ ['16:05','admin','출입카드 분실 신고 접수: 강민호 ("창고에서 잃어버린 것 같음") · 카드 정지 처리 대기 중'],
+ ['18:02','cctv','박태준 외 설치팀 2명 정문으로 철수'],
+ ['18:03','wifi','방문객 Wi-Fi 연결 해제: TJ-Galaxy-S24'],
+ ['19:28','card','직원 출입구: 오세라 카드'],
+ ['20:10','card','직원 출입구(나감): 오세라 카드'],
+ ['21:12','cctv','박태준 정문으로 방문 (경비원이 문 열어 줌)'],
+ ['21:13','wifi','방문객 Wi-Fi 접속: TJ-Galaxy-S24 (1층 AP)'],
+ ['21:20','cctv','박태준 정문으로 나감'],
+ ['21:21','wifi','방문객 Wi-Fi 연결 해제: TJ-Galaxy-S24'],
+ ['21:30','card','직원 출입구(나감): 윤채린 카드'],
+ ['22:00','admin','폐관 · 자동 경비 모드 전환'],
+ ['22:40','tv','강민호 자택(마포구) IPTV 시청 시작 — 영화 (리모컨 조작 기록 있음)'],
+ ['23:00','phone','강민호 휴대폰: 마포구 자택 인근 기지국'],
+ ['23:00','phone','윤채린 휴대폰: 은평구 자택 인근 기지국'],
+ ['23:00','phone','오세라 휴대폰: 서대문구 자택 인근 기지국'],
+ ['23:00','phone','박태준 휴대폰: 위치 기록 제출 거부'],
+ ['23:01','wifi','방문객 Wi-Fi 접속: TJ-Galaxy-S24 (뒷문 AP)'],
+ ['23:04','card','뒷문 출입: 강민호 카드'],
+ ['23:07','wifi','방문객 Wi-Fi: TJ-Galaxy-S24 (2층 AP)'],
+ ['23:12','tv','강민호 자택 IPTV: 일시정지 → 재생 (리모컨 조작)'],
+ ['23:19','card','뒷문(나감): 강민호 카드'],
+ ['23:20','wifi','방문객 Wi-Fi 연결 해제: TJ-Galaxy-S24'],
+ ['00:30','tv','강민호 자택 IPTV 시청 종료']
+].map(([t,s,d])=>{const [h,m]=t.split(':').map(Number); return {t,s,d,min:(h<12&&h<6?h+24:h)*60+m};});
+const srcOn=new Set(Object.keys(SRC));
+function renderLogs(){
+  const ts=$('timeSel').value, q=$('logSearch').value.trim();
+  const rows=LOGS.filter(l=>srcOn.has(l.s)&&(ts==='all'||(ts==='day'&&l.min<19*60)||(ts==='eve'&&l.min>=19*60&&l.min<22*60)||(ts==='night'&&l.min>=22*60))&&(!q||l.d.includes(q)));
+  $('logBody').innerHTML=rows.map(l=>`<tr><td>${l.t}</td><td><span class="src" style="background:${SRC[l.s].c}">${SRC[l.s].n}</span></td><td>${l.d}</td></tr>`).join('');
+  $('logCount').textContent=`${rows.length}건 / 전체 ${LOGS.length}건`;
+  $('logBody').querySelectorAll('tr').forEach(r=>r.onclick=()=>r.classList.toggle('hl'));
+}
+function initDigital(){
+  $('srcChips').innerHTML=Object.entries(SRC).map(([k,v])=>`<button class="chip on" data-k="${k}">${v.n}</button>`).join('');
+  $('srcChips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{const k=c.dataset.k; srcOn.has(k)?srcOn.delete(k):srcOn.add(k); c.classList.toggle('on'); renderLogs();});
+  $('timeSel').onchange=renderLogs; $('logSearch').oninput=renderLogs; renderLogs();
+  quiz('gq1',{q:'범행 시간대(23시 무렵) 뒷문을 연 출입카드는 누구의 카드인가요?',o:S.map(s=>`${s.id} ${s.name}의 카드`),a:0,
+    ok:'23:04 뒷문은 <b>강민호의 카드</b>로 열렸습니다. 그렇다면 강민호가 범인일까요? 아직 단정하면 안 됩니다. 카드는 <b>다른 사람도 쓸 수 있으니까요.</b>',
+    hint:'시간대를 "22:00 이후"로, 출처를 "출입카드"로 좁혀 보세요.'},()=>unlock('g2'));
+  quiz('gq2',{q:'23:04 무렵 강민호는 어디에 있었을까요? 근거가 되는 기록을 모두 확인해 보세요.',o:['과학관 뒷문 — 카드가 찍혔으니까','마포구 자택 — 휴대폰 기지국 + IPTV 리모컨 조작 기록','알 수 없음 — 기록이 하나도 없음'],a:1,
+    ok:'휴대폰은 자택 인근 기지국, IPTV는 23:12에 리모컨 조작 기록까지 있습니다. 게다가 이 카드는 16:05에 <b>분실 신고</b>된 카드! 누군가 <b>잃어버린(또는 훔친) 카드</b>를 쓴 것입니다.',
+    no:{0:'카드 기록은 "카드"가 쓰였다는 뜻이지 "강민호 본인"이 있었다는 뜻은 아닙니다. 같은 시각 다른 기록을 찾아보세요.',2:'"강민호"로 검색해 보세요. 생각보다 기록이 많아요.'}},()=>unlock('g3'));
+  quiz('gq3',{q:'범행 직전(23:01) 과학관 방문객 Wi-Fi에 자동 접속한 휴대폰은 누구의 것인가요?',o:S.map(s=>`${s.id} ${s.name}`),a:2,
+    ok:'"TJ-Galaxy-S24"는 13:10 방문자 등록 때 <b>박태준</b>이 등록한 휴대폰입니다. 한 번 접속한 Wi-Fi에는 휴대폰이 <b>자동으로 다시 접속</b>하죠. 위치 기록 제출은 거부했지만, 휴대폰이 23:01~23:20 과학관 안에 있었다는 흔적이 남았습니다. 또 15:20~15:22 박태준의 휴대폰은 강민호가 카드를 잃어버린 지하 창고에 함께 있었습니다.',
+    hint:'"TJ-Galaxy" 로 검색한 뒤, 그 기기를 처음 등록한 기록을 찾아보세요.'},()=>complete(5));
+}
+
+/* ---------------- 6. 법의학 ---------------- */
+function conc(hours, t0){ // hours since 18:00
+  const dt=hours-t0; if(dt<0) return 0; if(dt<0.5) return dt/0.5; return Math.pow(0.5,(dt-0.5)/3);
+}
+const MEAS_H=12.2, MEAS_C=0.14; // 06:12
+function hhmm(h){let m=Math.round(h*60)+18*60; const hh=Math.floor(m/60)%24, mm=m%60; return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');}
+function drawPK(){
+  const t0=+$('pkSlider').value/60, W=660,H=300, X=h=>55+h*(585/13), Y=c=>255-c*(215/1.2);
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="${W}" xmlns="${NS}"><rect x="55" y="40" width="585" height="215" fill="#fbfcfe" stroke="#d8dde8"/>`;
+  for(let h=0;h<=13;h++){s+=`<line x1="${X(h)}" y1="40" x2="${X(h)}" y2="255" stroke="#eef0f5"/><text x="${X(h)}" y="272" font-size="11" text-anchor="middle" fill="#555">${String((18+h)%24).padStart(2,'0')}시</text>`;}
+  for(let c=0;c<=1.2;c+=0.2){s+=`<text x="48" y="${Y(c)+4}" font-size="11" text-anchor="end" fill="#555">${c.toFixed(1)}</text>`;}
+  s+=`<text x="14" y="30" font-size="11.5" fill="#333">혈중 농도 (mg/L)</text><text x="640" y="292" font-size="11.5" text-anchor="end" fill="#333">시각 (11/16 18시 → 11/17 07시)</text>`;
+  s+=`<rect x="55" y="${Y(1.2)}" width="585" height="${Y(0.5)-Y(1.2)}" fill="#fff4dc" opacity=".7"/><line x1="55" y1="${Y(0.5)}" x2="640" y2="${Y(0.5)}" stroke="#f2a516" stroke-dasharray="5 4"/><text x="636" y="${Y(0.5)-6}" font-size="11.5" text-anchor="end" fill="#b07400">깊은 졸음 구간 (0.5 mg/L 이상)</text>`;
+  s+=`<line x1="${X(3.833)}" y1="40" x2="${X(3.833)}" y2="255" stroke="#888" stroke-dasharray="2 3"/><text x="${X(3.833)+4}" y="52" font-size="11" fill="#666">21:50 잠듦(CCTV)</text>`;
+  let d=''; for(let h=0;h<=13;h+=0.05){d+=(d?'L':'M')+X(h).toFixed(1)+' '+Y(conc(h,t0)).toFixed(1)+' ';}
+  s+=`<path d="${d}" fill="none" stroke="#2f4fb5" stroke-width="3"/>`;
+  s+=`<line x1="${X(t0)}" y1="255" x2="${X(t0)}" y2="${Y(1.0)}" stroke="#2f4fb5" stroke-dasharray="3 3" opacity=".5"/>`;
+  s+=`<circle cx="${X(MEAS_H)}" cy="${Y(MEAS_C)}" r="7" fill="#d6336c"/><text x="${X(MEAS_H)-8}" y="${Y(MEAS_C)-12}" font-size="12" text-anchor="end" fill="#d6336c" font-weight="700">06:12 측정 0.14</text></svg>`;
+  $('pkBox').innerHTML=s;
+  const pc=conc(MEAS_H,t0);
+  $('pkT').textContent=hhmm(t0); $('pkC').textContent=pc.toFixed(3);
+  $('pkOk').innerHTML=Math.abs(pc-MEAS_C)<0.006?'<b style="color:var(--ok)">✔ 측정값과 일치!</b>':(pc>MEAS_C?'곡선이 측정점보다 높아요 → 섭취 시각을 <b>앞으로</b>':'곡선이 측정점보다 낮아요 → 섭취 시각을 <b>뒤로</b>');
+}
+function initPK(){
+  $('pkSlider').oninput=drawPK; drawPK();
+  quiz('hq1',{q:'경비원이 수면유도제를 섭취한 시각은 대략 언제인가요?',o:['19시 30분 무렵','21시 10분 무렵','22시 30분 무렵','23시 이후'],a:1,
+    ok:'약 <b>21시 10분</b>입니다. 섭취 후 15분쯤부터 0.5 mg/L를 넘어 깊은 졸음 구간에 들어가니, 21:50에 잠들었다는 CCTV 기록과도 맞아요. 반감기로 확인: 21:40 최고 1.0 → 3시간마다 절반 → 00:40 0.5 → 03:40 0.25 → 06:40 0.125 이므로 06:12에는 약 0.14!',
+    no:{0:'슬라이더를 19:30에 놓아 보세요. 06:12의 예상 농도가 측정값보다 훨씬 낮습니다.',2:'22:30에 섭취했다면 06:12의 농도는 측정값보다 높아요. 그리고 경비원은 21:50에 이미 잠들었습니다.',3:'경비원은 21:50에 이미 잠들어 있었어요. 그 전에 섭취했어야 합니다.'}},()=>unlock('h2'));
+  quiz('hq2',{q:'수면유도제가 들어 있던 음료를 건넨 사람은?',o:['오세라 — 19:30 커피','박태준 — 21:12 에너지음료','둘 다 아님 — 경비원이 스스로 먹음'],a:1,
+    ok:'섭취 시각(21:10 무렵)과 맞는 것은 <b>박태준의 에너지음료</b>입니다. 박태준은 "6시 철수 후 과학관에 간 적 없다"고 진술했지만 CCTV에 21:12 방문이 찍혀 있어 <b>진술이 거짓</b>임이 드러났습니다. 오세라의 커피는 시각이 맞지 않아요.',
+    no:{0:'커피를 마신 19:30을 슬라이더에 맞춰 보세요. 06:12 예상 농도가 0.14 mg/L가 되나요?',2:'경비원은 평소 수면제를 먹지 않는다고 진술했고, 섭취 시각에 누군가 음료를 건넨 기록이 있습니다.'}},()=>complete(6));
+}
+
+/* ---------------- 최종 추리 ---------------- */
+let accused=null; const evSel=new Set();
+function refreshFinal(){
+  const c=Object.keys(done).length;
+  $('finalWarn').innerHTML = c<6 ? `현재 확보한 증거 <b>${c}/6</b>개. 증거가 부족하면 잘못된 사람을 지목할 위험이 커집니다. 모든 감식실을 마치고 오는 것을 권장합니다.` : '✔ 6개 감식실의 증거를 모두 확보했습니다. 증거들이 서로 맞아떨어지는지 확인하고 범인을 지목하세요.';
+  $('evPick').innerHTML = ST.map(s=>`<button class="chip ${evSel.has(s.n)?'on':''}" data-n="${s.n}" ${done[s.n]?'':'disabled style="opacity:.4"'}>${s.ic} ${s.t}</button>`).join('');
+  $('evPick').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const n=+b.dataset.n; evSel.has(n)?evSel.delete(n):evSel.add(n); b.classList.toggle('on');});
+}
+function initFinal(){
+  $('accuse').innerHTML=S.map(s=>`<button class="pick" data-id="${s.id}"><div class="av" style="background:${s.col};width:38px;height:38px;border-radius:50%;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 4px">${s.id}</div><b>${s.name}</b><div class="small">${s.role}</div></button>`).join('');
+  $('accuse').querySelectorAll('.pick').forEach(b=>b.onclick=()=>{accused=b.dataset.id; $('accuse').querySelectorAll('.pick').forEach(x=>x.classList.toggle('sel',x===b));});
+  $('accuseBtn').onclick=judge;
+}
+const WRONG={
+  A:'강민호의 카드가 뒷문에서 찍힌 것은 사실이지만, 그 카드는 16:05에 <b>분실 신고</b>된 카드였습니다. 23시 무렵 강민호의 휴대폰은 자택 기지국에 있었고 IPTV 리모컨 조작 기록도 있습니다. 지문은 문형(제상문)만 같고 특징점은 1개만 일치, 신발 치수(270 mm)와 밑창(구두)도 다릅니다.',
+  B:'윤채린은 지문 문형(와상문)부터 다르고, 신발 치수 235 mm·키 158 cm로 족적과 맞지 않습니다. 21:30 퇴근 기록과 23시 자택 기지국 기록도 있습니다.',
+  D:'"커피"라는 말 때문에 의심받았지만, 오세라의 커피(19:30)로는 06:12에 측정된 농도가 나오지 않습니다(약 0.09 mg/L). 지문(궁상문)·신발(250 mm)·잉크도 모두 다르고, 20:10 퇴근 후 자택 기지국에 있었습니다.'
+};
+function judge(){
+  const v=$('verdict');
+  if(!accused){ v.innerHTML='<div class="verdict lose">지목할 용의자를 먼저 선택하세요.</div>'; return; }
+  const team=$('team').value.trim()||'우리 수사팀';
+  if(accused!=='C'){
+    const s=S.find(x=>x.id===accused);
+    v.innerHTML=`<div class="verdict lose"><h3>❌ ${s.name} 씨는 범인이 아닙니다</h3><p>${WRONG[accused]}</p><p class="small">수사 노트와 체크표를 다시 살펴보고, 여러 증거가 <b>동시에</b> 가리키는 사람을 찾아보세요.</p></div>`;
+    return;
+  }
+  const n=evSel.size;
+  const grade = n>=5?'🏆 완벽한 수사! 여러 증거가 서로를 뒷받침합니다.': n>=3?'👍 좋은 수사입니다. 근거를 더 보태면 더 단단해져요.':'⚠️ 범인은 맞혔지만 근거가 부족합니다. 법정에서는 증거가 모든 것을 말합니다.';
+  v.innerHTML=`<div class="verdict win"><h3>✅ 사건 해결! 범인은 박태준(전시 설치업체 기사)</h3>
+   <p><b>${team}</b> · 근거로 고른 증거 ${n}개 — ${grade}</p>
+   <h3 style="margin-top:12px">🕰️ 사건 재구성</h3>
+   <div class="tl">
+    <div><b>13:10</b> 박태준, 진열장 조명 설치를 위해 방문. 휴대폰을 방문객 Wi-Fi에 등록.</div>
+    <div><b>15:20</b> 지하 창고에서 강민호가 떨어뜨린 출입카드를 몰래 챙김. (16:05 강민호 분실 신고 — 정지 처리 지연)</div>
+    <div><b>18:02</b> 설치팀과 함께 철수.</div>
+    <div><b>19:30</b> 오세라가 평소처럼 경비원에게 커피 전달. <span class="small">(사건과 무관 — 함정!)</span></div>
+    <div><b>21:12</b> "공구를 찾으러 왔다"며 재방문, 수면유도제를 탄 에너지음료를 경비원에게 건넴.</div>
+    <div><b>21:50</b> 경비원 잠듦.</div>
+    <div><b>23:01</b> 뒷문 도착. 휴대폰이 과학관 Wi-Fi에 <b>자동 접속</b>된 것을 몰랐음.</div>
+    <div><b>23:04</b> 훔친 강민호 카드로 뒷문 개방 → 진흙 족적을 남기며 2층으로.</div>
+    <div><b>23:07~</b> 3번 진열장 왼쪽 유리를 깨고 운석을 꺼냄. 이때 머리카락이 유리 틈에 끼고, 드라이버를 떨어뜨림. 1층 화장실에 계획 메모를 버림.</div>
+    <div><b>23:19</b> 뒷문으로 빠져나감.</div>
+   </div>
+   <h3 style="margin-top:12px">🔎 이번 수사에서 배운 과학수사 원칙</h3>
+   <ul style="margin:4px 0;padding-left:20px;font-size:14.5px">
+    <li><b>기록은 사람이 아니라 카드·기기를 가리킨다</b> — 출입카드만 봤다면 무고한 강민호를 체포했을 것입니다.</li>
+    <li><b>시간이 맞아야 원인이다</b> — '커피'라는 말보다, 반감기로 계산한 섭취 시각이 결정적이었습니다.</li>
+    <li><b>증거의 맥락을 따진다</b> — 드라이버 지문은 "설치 때 남겼다"고 변명할 수 있지만, <i>깨진 유리 사이</i>의 머리카락은 범행 순간을 가리킵니다.</li>
+    <li><b>여러 증거의 일치</b> — 지문·DNA·족적·잉크·디지털·법의학, 서로 다른 6가지 방법이 한 사람을 가리켰습니다.</li>
+   </ul>
+   <div class="row" style="margin-top:10px"><button class="btn ghost" id="copyRep">📋 수사 보고서 복사</button><span class="small" id="copyMsg"></span></div>
+  </div>`;
+  $('copyRep').onclick=()=>{
+    const txt=`[수사 보고서] 한빛과학관 운석 도난 사건\n수사팀: ${team}\n지목한 범인: 박태준(전시 설치업체 기사)\n\n근거 증거:\n`+[...evSel].sort().map(k=>`- ${ST[k-1].t}: ${EV[k]}`).join('\n')+`\n\n우리 팀의 추리:\n${$('reason').value||'(작성하지 않음)'}`;
+    navigator.clipboard.writeText(txt).then(()=>$('copyMsg').textContent='✔ 복사했습니다. 학습지나 패들렛에 붙여 넣으세요.').catch(()=>$('copyMsg').textContent='복사가 막혀 있어요. 화면을 캡처해 제출하세요.');
+  };
+}
+
+/* ---------------- 시작 ---------------- */
+buildTabs(); buildBrief(); buildMatrix();
+initFP(); initDNA(); initShoe(); initDoc(); initDigital(); initPK(); initFinal();
+go(0);
+</script>
+</body>
+</html>
